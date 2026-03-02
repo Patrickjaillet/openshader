@@ -1,0 +1,74 @@
+{
+  "Aurora Boréale": {
+    "shader_path": "shaders/glsl/aurora.glsl",
+    "description": "Simulation d'aurores boréales avec noise procédural",
+    "tags": ["ambient", "nature", "glsl"],
+    "uniforms": {}
+  },
+  "Lava Lamp": {
+    "shader_path": "shaders/glsl/lava_lamp.glsl",
+    "description": "Blobs métaball flottants style lampe à lave",
+    "tags": ["abstract", "smooth", "glsl"],
+    "uniforms": {}
+  },
+  "Neon Rain": {
+    "shader_path": "shaders/glsl/neon_rain.glsl",
+    "description": "Pluie de particules néon tombantes",
+    "tags": ["neon", "particles", "glsl"],
+    "uniforms": {}
+  },
+  "Crystal Geode": {
+    "shader_path": "shaders/glsl/crystal_geode.glsl",
+    "description": "Formation cristalline géodique raymarché",
+    "tags": ["raymarching", "crystal", "glsl"],
+    "uniforms": {}
+  },
+  "Wormhole": {
+    "shader_path": "shaders/glsl/wormhole.glsl",
+    "description": "Tunnel spatiotemporel infini",
+    "tags": ["space", "tunnel", "glsl"],
+    "uniforms": {}
+  },
+  "Ancient Desert Relic": {
+    "shader_path": "shaders/stoy/ANCIENT DESERT RELIC.st",
+    "description": "Relique fractal raymarché sur dunes de sable procédurales — PBR complet",
+    "tags": ["raymarching", "pbr", "desert", "shadertoy"],
+    "uniforms": {}
+  },
+  "Audio-Reactive Orbital System": {
+    "shader_path": "shaders/stoy/AUDIO-REACTIVE ORBITAL SYSTEM.st",
+    "description": "Système orbital qui réagit à l'audio (iAudioAmplitude)",
+    "tags": ["audio", "reactive", "orbital", "shadertoy"],
+    "uniforms": {}
+  },
+  "Bio-Mechanical Tunnel": {
+    "shader_path": "shaders/stoy/BIO-MECHANICAL TUNNEL.st",
+    "description": "Tunnel biomécanique Giger-esque en raymarching",
+    "tags": ["raymarching", "dark", "tunnel", "shadertoy"],
+    "uniforms": {}
+  },
+  "Biological Gyroid Tunnel": {
+    "shader_path": "shaders/stoy/BIOLOGICAL GYROID TUNNEL.st",
+    "description": "Surface gyroïde biologique infinie",
+    "tags": ["gyroid", "organic", "tunnel", "shadertoy"],
+    "uniforms": {}
+  },
+  "Celestial Fractal Singularity": {
+    "shader_path": "shaders/stoy/CELESTIAL FRACTAL SINGULARITY.st",
+    "description": "Singularité fractale céleste — zoom infini",
+    "tags": ["fractal", "space", "shadertoy"],
+    "uniforms": {}
+  },
+  "Cosmic Morphing Totem": {
+    "shader_path": "shaders/stoy/COSMIC MORPHING TOTEM.st",
+    "description": "Totem cosmique en morphing SDF continu",
+    "tags": ["sdf", "morphing", "cosmic", "shadertoy"],
+    "uniforms": {}
+  },
+  "Dynamic Julia Orb Lights": {
+    "shader_path": "shaders/stoy/DYNAMIC JULIA ORB LIGHTS.st",
+    "description": "Orbes lumineux animés sur ensemble de Julia dynamique",
+    "tags": ["julia", "fractal", "lights", "shadertoy"],
+    "uniforms": {}
+  }
+}

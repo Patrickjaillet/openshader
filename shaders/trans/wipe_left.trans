@@ -1,0 +1,16 @@
+// TRANSITION: Wipe gauche → droite
+// Un rideau horizontal balaie de gauche à droite avec bord adouci.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+
+    float edge  = iProgress;
+    float feather = 0.015;
+    float mask  = smoothstep(edge - feather, edge + feather, uv.x);
+
+    vec4 a = texture(iChannel0, uv);
+    vec4 b = texture(iChannel1, uv);
+    fragColor = mix(a, b, mask);
+}

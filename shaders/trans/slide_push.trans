@@ -1,0 +1,31 @@
+// TRANSITION: Poussée latérale
+// La scène B glisse depuis la droite et pousse la scène A vers la gauche.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+// Courbe ease-in-out cubique
+float ease(float t) { return t * t * (3.0 - 2.0 * t); }
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+
+    float p = ease(iProgress);
+
+    // UV décalés
+    vec2 uvA = uv + vec2(p,       0.0);  // A sort vers la gauche
+    vec2 uvB = uv + vec2(p - 1.0, 0.0); // B entre depuis la droite
+
+    // Ombre portée sur le bord
+    float edgeX = uvB.x;
+    float shadow = smoothstep(0.0, 0.06, edgeX) * 0.5;
+
+    vec4 a = texture(iChannel0, uvA);
+    vec4 b = texture(iChannel1, uvB);
+
+    // Sélection : si uvB.x est dans [0,1] on voit B, sinon A
+    float showB = step(0.0, uvB.x) * step(uvB.x, 1.0);
+    vec4 col = mix(a, b, showB);
+    col.rgb *= mix(1.0, 1.0 - shadow, showB == 0.0 ? 1.0 : 0.0);
+
+    fragColor = col;
+}

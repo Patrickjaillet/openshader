@@ -1,0 +1,59 @@
+// TRANSITION: Dissolution brûlure
+// Dissolution organique basée sur un bruit procédural, comme de l'encre dans l'eau.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+// Bruit de valeur simple
+float hash(vec2 p)
+{
+    p = fract(p * vec2(127.1, 311.7));
+    p += dot(p, p + 19.19);
+    return fract(p.x * p.y);
+}
+
+float noise(vec2 p)
+{
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(
+        mix(hash(i + vec2(0,0)), hash(i + vec2(1,0)), u.x),
+        mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x),
+        u.y
+    );
+}
+
+// fBM 4 octaves
+float fbm(vec2 p)
+{
+    float v = 0.0, amp = 0.5;
+    for (int i = 0; i < 4; i++) {
+        v   += amp * noise(p);
+        p   *= 2.1;
+        amp *= 0.5;
+    }
+    return v;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv   = fragCoord / iResolution.xy;
+    vec2 seed = uv * vec2(iResolution.x / iResolution.y, 1.0) * 4.0;
+
+    float n      = fbm(seed);
+    float feather = 0.12;
+
+    // Seuil mobile avec flottement bruit
+    float threshold = iProgress * (1.0 + feather) - feather * 0.5;
+    float mask      = smoothstep(threshold - feather, threshold + feather, n);
+
+    // Liseré de brûlure orange-rouge sur le front de dissolution
+    float rim   = smoothstep(threshold + feather, threshold, n)
+                * smoothstep(threshold - feather * 0.3, threshold, n);
+    vec3 rimCol = mix(vec3(1.0, 0.5, 0.0), vec3(1.0, 0.2, 0.0), n) * rim * 4.0;
+
+    vec4 a = texture(iChannel0, uv);
+    vec4 b = texture(iChannel1, uv);
+    vec4 col = mix(a, b, 1.0 - mask);
+    col.rgb += rimCol * (1.0 - abs(iProgress * 2.0 - 1.0));  // rim s'atténue aux extrêmes
+    fragColor = clamp(col, 0.0, 1.0);
+}

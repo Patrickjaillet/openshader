@@ -1,0 +1,23 @@
+// TRANSITION: Balayage radial (aiguille d'horloge)
+// Un balayage angulaire depuis 12h dans le sens horaire.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+#define PI 3.14159265
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv     = fragCoord / iResolution.xy;
+    vec2 center = vec2(0.5);
+    vec2 dir    = uv - center;
+
+    // Angle en [0, 2π], 0 = 12h, sens horaire
+    float angle  = atan(dir.x, dir.y) + PI;  // 0 → 2π
+    float sweep  = iProgress * 2.0 * PI;
+
+    float feather = 0.04;
+    float mask    = smoothstep(sweep - feather, sweep + feather, angle);
+
+    vec4 a = texture(iChannel0, uv);
+    vec4 b = texture(iChannel1, uv);
+    fragColor = mix(b, a, mask);
+}

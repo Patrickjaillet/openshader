@@ -1,0 +1,11 @@
+// TRANSITION: Crossfade (fondu enchaîné)
+// Dissolution linéaire entre scène A et scène B.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+    vec4 a = texture(iChannel0, uv);
+    vec4 b = texture(iChannel1, uv);
+    fragColor = mix(a, b, iProgress);
+}

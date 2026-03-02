@@ -1,0 +1,64 @@
+// TRANSITION: Glitch numérique
+// Artefacts RGB, blocs cassés et décalage horizontal aléatoire.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+float hash(float n) { return fract(sin(n) * 43758.5453); }
+float hash2(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+
+    // Intensité du glitch : monte puis retombe
+    float intensity = smoothstep(0.0, 0.3, iProgress)
+                    * smoothstep(1.0, 0.7, iProgress)
+                    * 1.8;
+
+    // ── Décalage horizontal par bandes ────────────────────────────────────────
+    float bandH  = 0.05 + 0.1 * hash(floor(iTime * 18.0));
+    float band   = floor(uv.y / bandH);
+    float shift  = (hash(band + iTime * 7.3) - 0.5) * intensity * 0.12;
+
+    vec2  uvA    = uv + vec2(shift, 0.0);
+    vec2  uvB    = uv - vec2(shift * 0.5, 0.0);
+
+    // ── RGB chromatic aberration ───────────────────────────────────────────────
+    float cab = intensity * 0.018;
+    vec4 a = vec4(
+        texture(iChannel0, uvA + vec2( cab, 0.0)).r,
+        texture(iChannel0, uvA).g,
+        texture(iChannel0, uvA - vec2( cab, 0.0)).b,
+        1.0
+    );
+    vec4 b = vec4(
+        texture(iChannel1, uvB + vec2( cab, 0.0)).r,
+        texture(iChannel1, uvB).g,
+        texture(iChannel1, uvB - vec2( cab, 0.0)).b,
+        1.0
+    );
+
+    // ── Blocs gelés aléatoires ──────────────────────────────────────────────────
+    vec2  blockSize = vec2(0.08, 0.06);
+    vec2  blockID   = floor(uv / blockSize);
+    float blockRnd  = hash2(blockID + floor(iTime * 12.0));
+    bool  frozen    = blockRnd < intensity * 0.35;
+    vec2  frozenUV  = frozen
+        ? blockID * blockSize + blockSize * 0.5   // centre du bloc
+        : uv;
+    if (frozen) {
+        a = texture(iChannel0, frozenUV);
+        b = texture(iChannel1, frozenUV);
+    }
+
+    // ── Mélange ────────────────────────────────────────────────────────────────
+    float base = smoothstep(0.0, 1.0, iProgress);
+    // Perturbation aléatoire du blend par blocs
+    float blendNoise = hash2(blockID) * intensity * 0.4;
+    float blend = clamp(base + blendNoise - intensity * 0.2, 0.0, 1.0);
+
+    // Flash blanc au milieu
+    float flash = smoothstep(0.45, 0.5, iProgress) * smoothstep(0.65, 0.5, iProgress) * 0.5;
+    vec4 col = mix(a, b, blend) + vec4(flash);
+
+    fragColor = clamp(col, 0.0, 1.0);
+}

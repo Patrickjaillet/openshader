@@ -1,0 +1,23 @@
+// TRANSITION: Pixelisation
+// La scène A se pixelise en grossissant, puis la scène B se dépixelise.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+
+    // Taille de pixel : max au milieu (iProgress ≈ 0.5), min aux extrêmes
+    float maxBlocks = 64.0;
+    float t         = 1.0 - abs(iProgress * 2.0 - 1.0); // triangle 0→1→0
+    float blocks    = mix(iResolution.x, iResolution.x / maxBlocks, t);
+
+    // UV pixelisés
+    vec2 pixUV = floor(uv * blocks) / blocks + 0.5 / blocks;
+
+    vec4 a = texture(iChannel0, pixUV);
+    vec4 b = texture(iChannel1, pixUV);
+
+    // Seuil de bascule : chaque pixel bascule de A vers B selon sa position
+    float blend = smoothstep(0.3, 0.7, iProgress);
+    fragColor = mix(a, b, blend);
+}

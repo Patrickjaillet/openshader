@@ -1,0 +1,24 @@
+// TRANSITION: Flash blanc
+// Fondu vers le blanc en première moitié, révèle B depuis le blanc.
+// Idéal pour les coupes dures sur beat.
+// iChannel0 = scène A, iChannel1 = scène B, iProgress = 0 → 1
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv   = fragCoord / iResolution.xy;
+    float p   = iProgress;
+
+    vec4 a = texture(iChannel0, uv);
+    vec4 b = texture(iChannel1, uv);
+
+    // Première moitié : A → blanc
+    float t1 = smoothstep(0.0, 0.5, p);
+    // Deuxième moitié : blanc → B
+    float t2 = smoothstep(0.5, 1.0, p);
+
+    vec4 white = vec4(1.0);
+    vec4 col   = mix(a, white, t1);
+         col   = mix(col, b, t2);
+
+    fragColor = col;
+}
